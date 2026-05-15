@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockFlow-AI - AI-Powered Mock Interviews</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/modals.css">
+    <link rel="stylesheet" href="/static/header-additions.css">
+</head>
+<body>
+    <!-- Auth Header (Left Side) - populated by header.js -->
+    <div class="auth-header" id="authHeader"></div>
+
+    <!-- Action Buttons (Right Side) - populated by header.js -->
+    <div class="action-buttons" id="actionButtons"></div>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-left">
+<div class="logo-mark" id="logoMark" style="cursor:pointer;">
+    <svg viewBox="0 0 48 48" width="72" height="100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="20" fill="#C8E6C9"/>
+        <circle cx="24" cy="24" r="12" fill="#81C784"/>
+        <circle cx="24" cy="24" r="6" fill="#4CAF50"/>
+    </svg>
+</div>
+
+                <h1>MockFlow.ai</h1>
+                <p class="tagline">Voice-native AI that interviews you, evaluates your live code, and scores your delivery.</p>
+
+                <ul class="features">
+                    <li>
+                        <span class="feature-icon green">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </span>
+                        <span>Live voice AI — sub-200ms, fully adaptive</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon pink">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </span>
+                        <span>4 tracks — Intro, Behavioral, Technical, Coding</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon purple">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="16 18 22 12 16 6"/>
+                                <polyline points="8 6 2 12 8 18"/>
+                            </svg>
+                        </span>
+                        <span>Monaco code editor with live AI evaluation</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon green">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span>Scored feedback with speech analytics</span>
+                    </li>
+                </ul>
+
+                <div class="tech-stack">
+                    <p class="tech-label">Powered by</p>
+                    <div class="tech-badges">
+                        <a href="https://docs.livekit.io/agents/" target="_blank" rel="noopener" class="badge">LiveKit</a>
+                        <a href="https://platform.openai.com/docs/" target="_blank" rel="noopener" class="badge">GPT-4o</a>
+                        <a href="https://developers.deepgram.com/" target="_blank" rel="noopener" class="badge">Deepgram</a>
+                        <a href="https://platform.openai.com/docs/guides/text-to-speech" target="_blank" rel="noopener" class="badge">OpenAI TTS</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="/start" class="btn-game primary">
+                    <div class="btn-game-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="5" r="3"/>
+                            <path d="M12 8v2"/>
+                            <path d="M7 21v-6a5 5 0 0 1 10 0v6"/>
+                            <path d="M12 10l-1 3h2l-1 3"/>
+                            <path d="M9 12l3 1 3-1"/>
+                            <path d="M9 12v9"/>
+                            <path d="M15 12v9"/>
+                        </svg>
+                    </div>
+                    <span class="btn-game-label">Start Interview</span>
+                </a>
+
+                <a href="/past-calls" class="btn-game secondary">
+                    <div class="btn-game-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                            <path d="M4.93 4.93l2.12 2.12"/>
+                        </svg>
+                    </div>
+                    <span class="btn-game-label">Past Sessions</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>MockFlow.ai — Practice makes confidence</p>
+    </footer>
+
+    <style>
+        /* Ripple rings */
+        .ripple-ring {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid rgba(76, 175, 80, 0.65);
+            width: 12px; height: 12px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: ripple-out 1.5s cubic-bezier(0.08, 0.55, 0.25, 1) forwards;
+        }
+        @keyframes ripple-out {
+            0%   { width: 12px;              height: 12px;              opacity: 1;   border-width: 2.5px; }
+            20%  { opacity: 0.85; }
+            100% { width: var(--ring-max, 580px); height: var(--ring-max, 580px); opacity: 0; border-width: 0.5px; }
+        }
+
+        /* Logo pulse on click */
+        .logo-mark {
+            transition: transform 0.15s ease-out;
+        }
+        .logo-mark.logo-pulse {
+            animation: logo-pop 0.35s ease-out forwards;
+        }
+        @keyframes logo-pop {
+            0%   { transform: scale(1); }
+            40%  { transform: scale(1.13); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tagline */
+        .tagline {
+            max-width: 500px !important;
+        }
+    </style>
+    <script src="/static/header.js"></script>
+    <script src="/static/auth.js"></script>
+    <script src="/static/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var logo = document.getElementById('logoMark');
+            if (logo) {
+                logo.addEventListener('click', function() {
+                    var rect = logo.getBoundingClientRect();
+                    var cx = rect.left + rect.width / 2;
+                    var cy = rect.top + rect.height / 2;
+
+                    // Logo pulse
+                    logo.classList.remove('logo-pulse');
+                    void logo.offsetWidth; // reflow to restart animation
+                    logo.classList.add('logo-pulse');
+                    logo.addEventListener('animationend', function() {
+                        logo.classList.remove('logo-pulse');
+                    }, { once: true });
+
+                    // 5 rings — progressively larger and slower, staggered
+                    var rings = [
+                        { delay: 0,   maxSize: 100, dur: 0.9  },
+                        { delay: 90,  maxSize: 240, dur: 1.2  },
+                        { delay: 185, maxSize: 390, dur: 1.55 },
+                        { delay: 280, maxSize: 530, dur: 1.85 },
+                        { delay: 370, maxSize: 660, dur: 2.1  }
+                    ];
+
+                    rings.forEach(function(r) {
+                        setTimeout(function() {
+                            var ring = document.createElement('div');
+                            ring.className = 'ripple-ring';
+                            ring.style.left = cx + 'px';
+                            ring.style.top = cy + 'px';
+                            ring.style.setProperty('--ring-max', r.maxSize + 'px');
+                            ring.style.animationDuration = r.dur + 's';
+                            document.body.appendChild(ring);
+                            ring.addEventListener('animationend', function() { ring.remove(); });
+                        }, r.delay);
+                    });
+                });
+            }
+
+            window.MockFlowHeader.init({
+                showHome: false,
+                showInfo: true,
+                showGithub: true,
+                showSponsor: true,
+                showSettings: true,
+                showAuth: true
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - MockFlow-AI</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/modals.css">
+    <link rel="stylesheet" href="/static/header-additions.css">
+</head>
+<body>
+    <!-- Action Buttons (Right Side) - populated by header.js -->
+    <div class="action-buttons" id="actionButtons"></div>
+
+    <div class="hero">
+        <div class="hero-content" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div class="logo-mark" style="background: rgba(229, 57, 53, 0.1);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            
+            <h1 style="font-size: 2.5rem;">Oops!</h1>
+            <p class="tagline">{{ error }}</p>
+            
+            <a href="/" class="btn-game primary" style="margin-top: var(--spacing-lg);">
+                <div class="btn-game-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="19" y1="12" x2="5" y2="12"/>
+                        <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                </div>
+                <span class="btn-game-label">Back Home</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/header.js"></script>
+    <script src="/static/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.MockFlowHeader.init({
+                showHome: true,
+                showInfo: true,
+                showGithub: true,
+                showSponsor: true,
+                showSettings: false,
+                showAuth: false
+            });
+        });
+    </script>
+</body>
+</html>

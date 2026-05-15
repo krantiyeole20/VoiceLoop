@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Feedback - MockFlow-AI</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/feedback.css">
+    <link rel="stylesheet" href="/static/modals.css">
+    <link rel="stylesheet" href="/static/header-additions.css">
+</head>
+<body>
+    <!-- Action Buttons (Right Side) - populated by header.js -->
+    <div class="action-buttons" id="actionButtons"></div>
+
+    <div class="feedback-page">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Interview Feedback</h1>
+        </div>
+
+        <!-- Interview Info Bar -->
+        <div class="interview-info" id="interviewInfo" style="display: none;"></div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">Loading interview...</div>
+        
+        <!-- Error State -->
+        <div class="error-state" id="errorState" style="display: none;"></div>
+
+        <!-- 2-Panel Container -->
+        <div class="panels-container" id="panelsContainer" style="display: none;">
+            <!-- Left Panel: Scores + Transcript Button -->
+            <div class="panel-left">
+                <!-- Scores Infographics Tablet -->
+                <div class="scores-tablet" id="scoresTablet" style="display: none;">
+                    <div class="tablet-header">
+                        <h3>Performance Scores</h3>
+                        <span class="cached-indicator" id="cachedIndicator" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Cached
+                        </span>
+                    </div>
+                    <div class="scores-content" id="scoresContent"></div>
+                </div>
+
+                <!-- Loading State for Scores -->
+                <div class="scores-loading" id="scoresLoading" style="display: none;">
+                    <div class="loading-spinner-big"></div>
+                    <p class="loading-text">Analyzing interview performance...</p>
+                </div>
+
+                <!-- Transcript Button -->
+                <div class="transcript-section">
+                    <button class="btn-view-transcript" id="viewTranscriptBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <line x1="10" y1="9" x2="8" y2="9"/>
+                        </svg>
+                        <span>View Full Transcript</span>
+                        <span class="turn-count" id="turnCount"></span>
+                    </button>
+                </div>
+
+                <!-- Generate Button (if no feedback yet) -->
+                <div class="generate-section" id="generateSection">
+                    <button class="btn-generate-main" id="generateBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                        </svg>
+                        <span>Generate Feedback</span>
+                    </button>
+                    <p class="generate-hint">Get AI-powered insights on your interview performance</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Detailed Feedback -->
+            <div class="panel-right">
+                <div class="feedback-header">
+                    <h2>Detailed Feedback</h2>
+                </div>
+
+                <!-- Loading State for Feedback Report -->
+                <div class="feedback-loading" id="feedbackLoading" style="display: none;">
+                    <div class="loading-spinner-big"></div>
+                    <p class="loading-phase" id="loadingPhase">Reading transcript...</p>
+                    <div class="phase-indicators">
+                        <span class="phase-dot active" data-phase="1"></span>
+                        <span class="phase-dot" data-phase="2"></span>
+                        <span class="phase-dot" data-phase="3"></span>
+                        <span class="phase-dot" data-phase="4"></span>
+                    </div>
+                </div>
+
+                <!-- Feedback Content -->
+                <div class="feedback-content" id="feedbackContent">
+                    <div class="feedback-placeholder" id="feedbackPlaceholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <p>Generate feedback to see detailed analysis and actionable insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transcript Modal -->
+        <div class="transcript-modal" id="transcriptModal">
+            <div class="modal-backdrop" id="transcriptModalBackdrop"></div>
+            <div class="transcript-modal-content">
+                <div class="transcript-modal-header">
+                    <h2>Interview Transcript</h2>
+                    <button class="modal-close-btn" id="closeTranscriptBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="transcript-modal-body" id="transcriptModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/header.js"></script>
+    <script src="/static/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.MockFlowHeader.init({
+                showHome: true,
+                showBack: true,
+                showInfo: true,
+                showGithub: true,
+                showSponsor: true,
+                showSettings: true,
+                showAuth: false
+            });
+        });
+    </script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        var filename = '{{ filename }}';
+        var feedbackState = {
+            scoresGenerated: false,
+            reportGenerated: false,
+            scoresData: null,
+            conversationData: null
+        };
+
+        var elements = {
+            loadingState: document.getElementById('loadingState'),
+            errorState: document.getElementById('errorState'),
+            panelsContainer: document.getElementById('panelsContainer'),
+            interviewInfo: document.getElementById('interviewInfo'),
+
+            scoresTablet: document.getElementById('scoresTablet'),
+            scoresContent: document.getElementById('scoresContent'),
+            scoresLoading: document.getElementById('scoresLoading'),
+            transcriptSection: document.querySelector('.transcript-section'),
+            viewTranscriptBtn: document.getElementById('viewTranscriptBtn'),
+            turnCount: document.getElementById('turnCount'),
+            generateSection: document.getElementById('generateSection'),
+            generateBtn: document.getElementById('generateBtn'),
+            cachedIndicator: document.getElementById('cachedIndicator'),
+
+            feedbackHeader: document.querySelector('.feedback-header'),
+            feedbackLoading: document.getElementById('feedbackLoading'),
+            loadingPhase: document.getElementById('loadingPhase'),
+            feedbackContent: document.getElementById('feedbackContent'),
+            feedbackPlaceholder: document.getElementById('feedbackPlaceholder'),
+
+            transcriptModal: document.getElementById('transcriptModal'),
+            transcriptModalBackdrop: document.getElementById('transcriptModalBackdrop'),
+            transcriptModalBody: document.getElementById('transcriptModalBody'),
+            closeTranscriptBtn: document.getElementById('closeTranscriptBtn')
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        function init() {
+            loadInterview();
+            elements.generateBtn.addEventListener('click', startFeedbackGeneration);
+            elements.viewTranscriptBtn.addEventListener('click', openTranscriptModal);
+            elements.closeTranscriptBtn.addEventListener('click', closeTranscriptModal);
+            elements.transcriptModalBackdrop.addEventListener('click', closeTranscriptModal);
+        }
+        
+        function loadInterview() {
+            fetch('/api/interview/' + encodeURIComponent(filename))
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Interview not found');
+                    return response.json();
+                })
+                .then(function(data) {
+                    elements.loadingState.style.display = 'none';
+
+                    if (data.error) {
+                        showError('Interview not found in database: ' + data.error);
+                        return;
+                    }
+
+                    renderInterview(data);
+                    checkCachedFeedback();
+                })
+                .catch(function(err) {
+                    console.error('[FEEDBACK] Load error:', err);
+                    elements.loadingState.style.display = 'none';
+                    showError('Failed to load interview. Please check your Past Interviews page.');
+                });
+        }
+
+        function showError(message) {
+            elements.loadingState.style.display = 'none';
+            elements.errorState.innerHTML =
+                '<p style="margin-bottom: 1rem;">' + message + '</p>' +
+                '<div style="display: flex; gap: 0.75rem; justify-content: center;">' +
+                    '<button onclick="location.reload()" class="btn-retry">Retry</button>' +
+                    '<a href="/past-calls" class="btn-retry" style="text-decoration: none;">All Interviews</a>' +
+                '</div>';
+            elements.errorState.style.display = 'flex';
+        }
+
+        function renderInterview(data) {
+            elements.panelsContainer.style.display = 'grid';
+            elements.interviewInfo.style.display = 'flex';
+
+            var meta = data.meta || {};
+            var conversation = data.ordered_conversation || [];
+            feedbackState.conversationData = conversation;
+
+            var stagesHtml = '';
+            if (meta.stages_covered && meta.stages_covered.length) {
+                stagesHtml = '<div class="info-item"><span class="info-label">Stages</span><div class="stages-list">' +
+                    meta.stages_covered.filter(function(s) { return s; }).map(function(s) {
+                        return '<span class="stage-badge">' + formatStage(s) + '</span>';
+                    }).join('') + '</div></div>';
+            }
+
+            elements.interviewInfo.innerHTML =
+                '<div class="info-item"><span class="info-label">Candidate</span><span class="info-value">' + escapeHtml(meta.candidate || 'Unknown') + '</span></div>' +
+                '<div class="info-item"><span class="info-label">Date</span><span class="info-value">' + formatDate(meta.interview_date) + '</span></div>' +
+                '<div class="info-item"><span class="info-label">Turns</span><span class="info-value">' + conversation.length + '</span></div>' +
+                stagesHtml;
+
+            elements.turnCount.textContent = conversation.length + ' turns';
+
+            var transcriptHtml = conversation.map(function(turn) {
+                var roleClass = turn.role === 'agent' ? 'agent' : 'candidate';
+                var roleLabel = turn.role === 'agent' ? 'Interviewer' : 'Candidate';
+                var stageTag = turn.stage ? '<span class="turn-stage">' + formatStage(turn.stage) + '</span>' : '';
+                return '<div class="transcript-turn">' +
+                    '<div class="turn-header">' +
+                        '<span class="turn-role ' + roleClass + '">' + roleLabel + '</span>' + stageTag +
+                    '</div>' +
+                    '<p class="turn-text">' + escapeHtml(turn.text) + '</p>' +
+                '</div>';
+            }).join('');
+
+            elements.transcriptModalBody.innerHTML = transcriptHtml || '<p style="color: var(--text-muted); text-align: center;">No transcript available.</p>';
+
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('request_feedback') === '1' && !feedbackState.reportGenerated) {
+                startFeedbackGeneration();
+            }
+        }
+        
+        function checkCachedFeedback() {
+            fetch('/api/feedback/get/' + encodeURIComponent(filename))
+                .then(function(response) {
+                    if (!response.ok) return null;
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data && data.feedback_data) {
+                        console.log('[FEEDBACK] Found cached feedback in database');
+
+                        if (data.feedback_data.scores) {
+                            renderScores(data.feedback_data.scores, true);
+                            feedbackState.scoresGenerated = true;
+                        }
+
+                        if (data.feedback_data.feedback) {
+                            renderFeedback(data.feedback_data.feedback, true);
+                            feedbackState.reportGenerated = true;
+                        }
+
+                        elements.generateSection.style.display = 'none';
+                    } else {
+                        console.log('[FEEDBACK] No cached feedback found');
+                    }
+                })
+                .catch(function(err) {
+                    console.log('[FEEDBACK] No cached feedback available');
+                });
+        }
+
+        function startFeedbackGeneration() {
+            if (feedbackState.reportGenerated) return;
+
+            elements.generateBtn.disabled = true;
+            elements.generateSection.style.display = 'none';
+
+            generateScores();
+        }
+
+        function generateScores() {
+            console.log('[FEEDBACK] Stage 1: Generating scores...');
+            elements.scoresLoading.style.display = 'flex';
+
+            fetch('/api/feedback/scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ interview_id: filename })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.error) {
+                    showScoresError(data.message || data.error);
+                    return;
+                }
+                console.log('[FEEDBACK] Scores generated successfully');
+                feedbackState.scoresData = data.scores;
+                feedbackState.scoresGenerated = true;
+
+                renderScores(data.scores, false);
+
+                setTimeout(function() { generateReport(); }, 500);
+            })
+            .catch(function(err) {
+                console.error('[FEEDBACK] Scores generation error:', err);
+                showScoresError('Failed to analyze interview: ' + err.message);
+            });
+        }
+
+        function generateReport() {
+            console.log('[FEEDBACK] Stage 2: Generating detailed report...');
+            elements.feedbackPlaceholder.style.display = 'none';
+            elements.feedbackLoading.style.display = 'flex';
+
+            var phases = [
+                'Reading transcript...',
+                'Matching candidate info...',
+                'Looking through job requirements...',
+                'Contemplating insights...'
+            ];
+            var phaseIndex = 0;
+
+            var phaseInterval = setInterval(function() {
+                phaseIndex = (phaseIndex + 1) % phases.length;
+                elements.loadingPhase.textContent = phases[phaseIndex];
+
+                var dots = document.querySelectorAll('.phase-dot');
+                dots.forEach(function(dot, i) {
+                    dot.classList.toggle('active', i <= phaseIndex);
+                });
+            }, 3000);
+
+            fetch('/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    interview_id: filename,
+                    scores: feedbackState.scoresData
+                })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                clearInterval(phaseInterval);
+
+                if (data.error) {
+                    showFeedbackError(data.message || data.error);
+                    return;
+                }
+
+                console.log('[FEEDBACK] Report generated successfully');
+                feedbackState.reportGenerated = true;
+
+                saveFeedbackToDatabase(filename, {
+                    feedback: data.feedback,
+                    scores: feedbackState.scoresData
+                });
+
+                renderFeedback(data.feedback, false);
+            })
+            .catch(function(err) {
+                clearInterval(phaseInterval);
+                console.error('[FEEDBACK] Report generation error:', err);
+                showFeedbackError('Failed to generate report: ' + err.message);
+            });
+        }
+
+        function saveFeedbackToDatabase(interviewId, feedbackData) {
+            fetch('/api/feedback/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    interview_id: interviewId,
+                    feedback: feedbackData
+                })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(result) {
+                if (result.success) {
+                    console.log('[FEEDBACK] Saved to database successfully');
+                } else {
+                    console.error('[FEEDBACK] Save failed:', result.message);
+                }
+            })
+            .catch(function(err) {
+                console.error('[FEEDBACK] Save error:', err);
+            });
+        }
+
+        function renderScores(scoresData, fromCache) {
+            elements.scoresLoading.style.display = 'none';
+            elements.scoresTablet.style.display = 'block';
+
+            if (fromCache) {
+                elements.cachedIndicator.style.display = 'inline-flex';
+            }
+
+            var html = '<div class="scores-grid">';
+
+            html += '<div class="score-summary">';
+
+            html += '<div class="score-overall">';
+            html += '<div class="score-circle">';
+            html += '<svg viewBox="0 0 70 70">';
+            html += '<circle cx="35" cy="35" r="30" class="score-bg"/>';
+            var percent = (scoresData.overall_score / 5) * 100;
+            var circumference = 2 * Math.PI * 30;
+            var offset = circumference - (percent / 100) * circumference;
+            html += '<circle cx="35" cy="35" r="30" class="score-progress" style="stroke-dasharray: ' + circumference + '; stroke-dashoffset: ' + offset + ';"/>';
+            html += '<text x="35" y="40" class="score-number">' + scoresData.overall_score.toFixed(1) + '</text>';
+            html += '</svg>';
+            html += '</div>';
+            html += '<p class="score-label">Overall</p>';
+            html += '</div>';
+
+            if (scoresData.competencies && scoresData.competencies.length >= 2) {
+                var sorted = scoresData.competencies.slice().sort(function(a, b) {
+                    return (b.score / b.max_score) - (a.score / a.max_score);
+                });
+                var topComp = sorted[0];
+                var lowComp = sorted[sorted.length - 1];
+
+                html += '<div class="score-mini">';
+                html += '<div class="score-mini-label">Top Score</div>';
+                html += '<div class="score-mini-value">' + topComp.score + '/' + topComp.max_score + '</div>';
+                html += '<div class="score-mini-bar">';
+                var topPercent = (topComp.score / topComp.max_score) * 100;
+                html += '<div class="score-mini-fill" style="width: ' + topPercent + '%"></div>';
+                html += '</div>';
+                html += '<div class="score-mini-note">' + escapeHtml(topComp.name) + '</div>';
+                html += '</div>';
+
+                html += '<div class="score-mini">';
+                html += '<div class="score-mini-label">Focus Area</div>';
+                html += '<div class="score-mini-value">' + lowComp.score + '/' + lowComp.max_score + '</div>';
+                html += '<div class="score-mini-bar">';
+                var lowPercent = (lowComp.score / lowComp.max_score) * 100;
+                html += '<div class="score-mini-fill" style="width: ' + lowPercent + '%"></div>';
+                html += '</div>';
+                html += '<div class="score-mini-note">' + escapeHtml(lowComp.name) + '</div>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            if (scoresData.competencies && scoresData.competencies.length) {
+                scoresData.competencies.forEach(function(comp) {
+                    html += '<div class="competency-item">';
+                    html += '<div class="competency-header">';
+                    html += '<span class="competency-name">' + escapeHtml(comp.name) + '</span>';
+                    html += '<span class="competency-score">' + comp.score + '/' + comp.max_score + '</span>';
+                    html += '</div>';
+                    html += '<div class="competency-bar">';
+                    var scorePercent = (comp.score / comp.max_score) * 100;
+                    html += '<div class="competency-fill" style="width: ' + scorePercent + '%"></div>';
+                    html += '</div>';
+                    html += '<p class="competency-note">' + escapeHtml(comp.quick_take) + '</p>';
+                    html += '</div>';
+                });
+            }
+
+            html += '<div class="score-highlights">';
+            if (scoresData.top_strength) {
+                html += '<div class="highlight-item highlight-strength">';
+                html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>';
+                html += '<div><strong>Top Strength:</strong> ' + escapeHtml(scoresData.top_strength) + '</div>';
+                html += '</div>';
+            }
+            if (scoresData.top_improvement) {
+                html += '<div class="highlight-item highlight-improvement">';
+                html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+                html += '<div><strong>Focus Area:</strong> ' + escapeHtml(scoresData.top_improvement) + '</div>';
+                html += '</div>';
+            }
+            html += '</div>';
+
+            html += '</div>';
+            elements.scoresContent.innerHTML = html;
+        }
+
+        function showScoresError(message) {
+            elements.scoresLoading.style.display = 'none';
+            elements.scoresTablet.style.display = 'block';
+            elements.scoresContent.innerHTML =
+                '<div class="scores-error">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+                    '<p>' + escapeHtml(message) + '</p>' +
+                    '<button class="btn-retry" onclick="location.reload()">Retry</button>' +
+                '</div>';
+        }
+
+        function showFeedbackError(message) {
+            elements.feedbackLoading.style.display = 'none';
+            elements.feedbackContent.innerHTML =
+                '<div class="feedback-error">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+                    '<p>' + escapeHtml(message) + '</p>' +
+                    '<button class="btn-retry" onclick="location.reload()">Retry</button>' +
+                '</div>';
+        }
+
+        function renderFeedback(feedbackText, fromCache) {
+            elements.feedbackLoading.style.display = 'none';
+            elements.feedbackPlaceholder.style.display = 'none';
+
+            var html = parseMarkdown(feedbackText);
+            elements.feedbackContent.innerHTML = '<div class="feedback-text">' + html + '</div>';
+        }
+
+        function openTranscriptModal() {
+            elements.transcriptModal.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTranscriptModal() {
+            elements.transcriptModal.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+        
+        function parseMarkdown(text) {
+            if (!text) return '<p>No feedback available.</p>';
+            
+            var html = text;
+            html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            html = html.replace(/^## (\d+)\. (.+)$/gm, '<h2 class="feedback-h2"><span class="section-num">$1</span>$2</h2>');
+            html = html.replace(/^## (.+)$/gm, '<h2 class="feedback-h2">$1</h2>');
+            html = html.replace(/^### (.+)$/gm, '<h3 class="feedback-h3">$1</h3>');
+            
+            html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                return '<pre class="code-block"><code>' + code.trim() + '</code></pre>';
+            });
+            
+            html = html.replace(/^---+$/gm, '<hr class="feedback-hr">');
+            
+            html = html.replace(/^&gt; (.+)$/gm, '<blockquote class="feedback-quote">$1</blockquote>');
+            
+            html = html.replace(/^- (.+)$/gm, '<li class="feedback-li">$1</li>');
+            html = html.replace(/(<li class="feedback-li">.+<\/li>\n?)+/g, '<ul class="feedback-ul">$&</ul>');
+            
+            html = html.replace(/^\d+\. \[([^\]]+)\] (.+)$/gm, '<li class="feedback-li"><span class="list-tag">$1</span>$2</li>');
+            html = html.replace(/^\d+\. (.+)$/gm, '<li class="feedback-li-num">$1</li>');
+            html = html.replace(/(<li class="feedback-li-num">.+<\/li>\n?)+/g, '<ol class="feedback-ol">$&</ol>');
+            
+            var lines = html.split('\n');
+            var result = [];
+            var inPara = false;
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) {
+                    if (inPara) { result.push('</p>'); inPara = false; }
+                    continue;
+                }
+                if (line.match(/^<(h[23]|ul|ol|li|pre|blockquote|hr)/)) {
+                    if (inPara) { result.push('</p>'); inPara = false; }
+                    result.push(line);
+                    continue;
+                }
+                if (!inPara) { result.push('<p class="feedback-p">'); inPara = true; }
+                result.push(line);
+            }
+            if (inPara) result.push('</p>');
+            
+            return result.join('\n');
+        }
+        
+        function formatDate(isoDate) {
+            if (!isoDate) return 'Unknown';
+            try {
+                var date = new Date(isoDate);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch (e) { return isoDate; }
+        }
+        
+        function formatStage(stage) {
+            var map = { 'welcome': 'Welcome', 'self_intro': 'Intro', 'past_experience': 'Experience', 'company_fit': 'Fit', 'closing': 'Closing' };
+            return map[stage] || stage || '';
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    })();
+    </script>
+</body>
+</html>

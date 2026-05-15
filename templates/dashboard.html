@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - MockFlow.ai</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/modals.css">
+    <link rel="stylesheet" href="/static/header-additions.css">
+</head>
+<body>
+    <!-- Action Buttons (Right Side) - populated by header.js -->
+    <div class="action-buttons" id="actionButtons"></div>
+
+    <div class="hero">
+        <div class="hero-content" style="max-width: 900px;">
+            <h1 style="text-align: center; margin-bottom: 2rem;">Account Settings</h1>
+
+            <!-- User Info Card -->
+            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <div id="userAvatarPlaceholder" style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #81C784, #4CAF50); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: 600;"></div>
+                    <div style="flex: 1;">
+                        <h2 id="userName" style="margin-bottom: 0.25rem;"></h2>
+                        <p id="userEmail" style="color: var(--text-muted); margin-bottom: 0.5rem;"></p>
+                        <button onclick="logout()" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Keys Section -->
+            <div class="card" style="padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h3 style="margin-bottom: 0.5rem;">API Keys</h3>
+                        <p style="color: var(--text-muted); font-size: 0.875rem;">Manage your API keys for interviews (BYOK)</p>
+                    </div>
+                    <a href="/api-keys" class="btn-primary" style="text-decoration: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                        </svg>
+                        Manage Keys
+                    </a>
+                </div>
+
+                <div id="apiKeysStatus" style="padding: 1rem; background: var(--bg-warm); border-radius: 8px;">
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Loading API keys status...</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+                <a href="/start" class="btn-game primary" style="width: 110px; height: 110px;">
+                    <div class="btn-game-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+                            <circle cx="12" cy="5" r="3"/>
+                            <path d="M12 8v2"/>
+                            <path d="M7 21v-6a5 5 0 0 1 10 0v6"/>
+                            <path d="M12 10l-1 3h2l-1 3"/>
+                            <path d="M9 12l3 1 3-1"/>
+                            <path d="M9 12v9"/>
+                            <path d="M15 12v9"/>
+                        </svg>
+                    </div>
+                    <span class="btn-game-label">Start Interview</span>
+                </a>
+
+                <a href="/past-calls" class="btn-game secondary" style="width: 110px; height: 110px;">
+                    <div class="btn-game-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                            <path d="M4.93 4.93l2.12 2.12"/>
+                        </svg>
+                    </div>
+                    <span class="btn-game-label">Past Sessions</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/header.js"></script>
+    <script src="/static/auth.js"></script>
+    <script src="/static/dashboard.js"></script>
+    <script src="/static/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.MockFlowHeader.init({
+                showHome: true,
+                showInfo: true,
+                showGithub: true,
+                showSponsor: true,
+                showSettings: true,
+                showAuth: false
+            });
+        });
+    </script>
+</body>
+</html>

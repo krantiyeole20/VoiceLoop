@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Interviews - MockFlow-AI</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/past_calls.css">
+    <link rel="stylesheet" href="/static/modals.css">
+    <link rel="stylesheet" href="/static/header-additions.css">
+</head>
+<body>
+    <!-- Action Buttons (Right Side) - populated by header.js -->
+    <div class="action-buttons" id="actionButtons"></div>
+
+    <div class="past-calls-page">
+        <div class="page-header">
+            <h1>Past Interviews</h1>
+        </div>
+
+        <div class="error-state" id="errorState" style="display: none;"></div>
+
+        <div class="interviews-grid" id="interviewsGrid">
+            <div class="loading-state" id="loadingState">
+                Loading interviews...
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/header.js"></script>
+    <script src="/static/modal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.MockFlowHeader.init({
+                showHome: true,
+                showInfo: true,
+                showGithub: true,
+                showSponsor: true,
+                showSettings: true,
+                showAuth: false
+            });
+        });
+    </script>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        var elements = {
+            loadingState: document.getElementById('loadingState'),
+            errorState: document.getElementById('errorState'),
+            interviewsGrid: document.getElementById('interviewsGrid')
+        };
+        
+        document.addEventListener('DOMContentLoaded', loadInterviews);
+
+        function loadInterviews() {
+            checkAuth().then(function(isAuthenticated) {
+                if (isAuthenticated) {
+                    loadFromDatabase();
+                } else {
+                    showError('Please log in to view your interviews');
+                }
+            }).catch(function() {
+                showError('Authentication check failed. Please log in.');
+            });
+        }
+
+        function checkAuth() {
+            return fetch('/api/auth/status')
+                .then(function(response) { return response.json(); })
+                .then(function(data) { return data.authenticated; })
+                .catch(function() { return false; });
+        }
+
+        function loadFromDatabase() {
+            fetch('/api/user/interviews?limit=50')
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Failed to load interviews');
+                    return response.json();
+                })
+                .then(function(dbInterviews) {
+                    console.log('[PAST_CALLS] Loaded ' + dbInterviews.length + ' interviews from database');
+
+                    elements.loadingState.style.display = 'none';
+
+                    if (dbInterviews.length === 0) {
+                        showEmptyState();
+                        return;
+                    }
+
+                    renderInterviews(dbInterviews);
+                })
+                .catch(function(err) {
+                    console.error('[PAST_CALLS] Database load error:', err);
+                    elements.loadingState.style.display = 'none';
+                    showError('Failed to load interviews: ' + err.message);
+                });
+        }
+
+        function showError(message) {
+            elements.errorState.textContent = message;
+            elements.errorState.style.display = 'block';
+        }
+
+        function showEmptyState() {
+            elements.interviewsGrid.innerHTML =
+                '<div class="empty-state">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+                        '<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>' +
+                    '</svg>' +
+                    '<h3>No interviews yet</h3>' +
+                    '<p>Complete your first mock interview to see it here.</p>' +
+                '</div>';
+        }
+        
+        function renderInterviews(interviews) {
+            var html = interviews.map(function(interview) {
+                var date = interview.interview_date ? formatDate(interview.interview_date) : 'Unknown date';
+                var messageCount = interview.total_messages || {};
+                var totalMessages = (messageCount.agent || 0) + (messageCount.user || 0);
+
+                var interviewId = interview.id;
+
+                var tagsHtml = '';
+                if (interview.job_role) {
+                    tagsHtml += '<span class="interview-tag role">' + escapeHtml(interview.job_role) + '</span>';
+                }
+                if (interview.experience_level) {
+                    tagsHtml += '<span class="interview-tag level">' + formatLevel(interview.experience_level) + '</span>';
+                }
+
+                return '<a href="/feedback/' + encodeURIComponent(interviewId) + '" class="interview-card">' +
+                    '<div class="card-content">' +
+                        '<div class="interview-name">' + escapeHtml(interview.candidate_name || 'Unknown') + '</div>' +
+                        '<div class="interview-date">' + date + '</div>' +
+                        (tagsHtml ? '<div class="interview-tags">' + tagsHtml + '</div>' : '') +
+                        '<div class="interview-meta">' +
+                            '<span class="interview-meta-item">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
+                                totalMessages + ' msgs' +
+                            '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                        '<path d="M9 18l6-6-6-6"/>' +
+                    '</svg>' +
+                '</a>';
+            }).join('');
+
+            elements.interviewsGrid.innerHTML = html;
+        }
+        
+        function formatLevel(level) {
+            var levels = { 'entry': 'Entry', 'junior': 'Junior', 'mid': 'Mid', 'senior': 'Senior', 'lead': 'Lead', 'staff': 'Staff' };
+            return levels[level] || level;
+        }
+        
+        function formatDate(isoDate) {
+            try {
+                var date = new Date(isoDate);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            } catch (e) { return isoDate; }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    })();
+    </script>
+</body>
+</html>
